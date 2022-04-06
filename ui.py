@@ -83,16 +83,10 @@ class UI(Frame):
     def draw_grid(self):
         for y in range(const.ROWS):
             for x in range(const.COLUMNS):
-                if ChessGame.is_white:
-                    if (x - y) % 2 == 0:
-                        current_color = self.color.white
-                    else:
-                        current_color = self.color.black
+                if (x - y) % 2 == 0:
+                    current_color = self.color.white
                 else:
-                    if (x - y) % 2 == 0:
-                        current_color = self.color.black
-                    else:
-                        current_color = self.color.white
+                    current_color = self.color.black
 
                 self.canvas.create_rectangle(
                     x * self.square_size,
