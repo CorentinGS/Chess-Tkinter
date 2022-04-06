@@ -86,7 +86,7 @@ class Chess:
         index: list = list(np.vstack(np.where(self.board == value)).T[0])
         return index[1], index[0]
 
-    def move_piece(self, piece: Piece, final_pos: tuple[int, int]):
+    def move_piece(self, piece: Piece, final_pos: tuple[int, int], escape: bool = False):
         if self.en_passant:
             self.en_passant = False
         keep = self.board[final_pos[1]][final_pos[0]]
@@ -104,7 +104,8 @@ class Chess:
 
         callback.update_tkinter_chess_board()
 
-        MyChessEngine.play_move(get_uci(piece.coords, final_pos, self.is_white))
+        if not escape:
+            MyChessEngine.play_move(get_uci(piece.coords, final_pos, self.is_white))
 
         if piece.is_pawn() and abs(piece.coords[1] - final_pos[1]) == 2:
             self.en_passant = True
@@ -112,14 +113,14 @@ class Chess:
             if piece.is_white() is self.is_white:
                 self.short_castle, self.long_castle = False, False
 
-            if piece.is_king() and (piece.coords[0] - final_pos[0] == -2):
+            if piece.coords[0] - final_pos[0] == -2:
                 target = self.get_piece_at_position((7, piece.coords[1]))
-                self.move_piece(target, (final_pos[0] - 1, final_pos[1]))
-            elif piece.is_king() and (piece.coords[0] - final_pos[0] == 2):
+                self.move_piece(target, (final_pos[0] - 1, final_pos[1]), True)
+            elif piece.coords[0] - final_pos[0] == 2:
                 target = self.get_piece_at_position((0, piece.coords[1]))
-                self.move_piece(target, (final_pos[0] + 1, final_pos[1]))
+                self.move_piece(target, (final_pos[0] + 1, final_pos[1]), True)
 
-        if piece.is_rook() and piece.coords == (7, 7):
+        elif piece.is_rook() and piece.coords == (7, 7):
             if self.is_white:
                 self.short_castle = False
             else:

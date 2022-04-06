@@ -28,16 +28,14 @@ class ChessEngine:
             r"./engine/stockfish_14.1_linux_x64")
 
     def play_move(self, uci: str):
-        print(uci)
 
         move = chess.Move.from_uci(uci)
 
         self.board.push(move)
 
     def play_bot_move(self) -> [tuple[int, int], tuple[int, int]]:
-        result = self.engine.play(self.board, chess.engine.Limit(time=0.5))
+        result = self.engine.play(self.board, chess.engine.Limit(time=2))
         pos1, pos2 = uci_to_numpy(result.move.uci())
-        print(pos1, pos2)
         return pos1, pos2
 
 
