@@ -11,17 +11,18 @@ class UI(Frame):
     def square_size(self):
         return self._square_size
 
-    @property
-    def set_square_size(self) -> float:
-        return AppInstance.width / const.COLUMNS
+    @square_size.setter
+    def square_size(self, value):
+        self._square_size = value
 
     def __init__(self):
         super().__init__()
         self.pack(fill=BOTH, expand=True)
-        self.square_size: float = self.set_square_size
+        self.square_size: float = AppInstance.width / const.COLUMNS
         self.canvas: Canvas = Canvas(AppInstance.root, height=AppInstance.height, width=AppInstance.width)
         self.color: Color = Color()
         self.winfo_toplevel().title("ChessBoard")
+        self.winfo_toplevel().resizable(False, False)
 
         self.render_board()
 
@@ -49,7 +50,3 @@ class UI(Frame):
                     fill=current_color,
                     outline="",
                 )
-
-    @square_size.setter
-    def square_size(self, value):
-        self._square_size = value
