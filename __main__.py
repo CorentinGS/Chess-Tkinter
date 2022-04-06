@@ -20,9 +20,6 @@ def main():
 
     update_tkinter_chess_board()
 
-    ChessGame.move_piece((6, 4), [4, 4])
-    update_tkinter_chess_board()
-
     AppInstance.root.mainloop()
 
 
