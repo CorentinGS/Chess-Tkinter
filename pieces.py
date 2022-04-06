@@ -1,6 +1,3 @@
-from tkinter import PhotoImage
-
-
 class Piece:
 
     def __init__(self, piece: int, coords: tuple[int, int]):

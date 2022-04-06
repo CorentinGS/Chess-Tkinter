@@ -1,7 +1,6 @@
-import numpy as np
 
-from chess import Chess, ChessGame
-from ui import UI, GUI
+from chess import ChessGame
+from ui import GUI
 
 
 def update_tkinter_chess_board():
