@@ -1,2 +1,9 @@
 COLUMNS: int = 8
 ROWS: int = 8
+
+PIECE_K = 10
+PIECE_Q = 11
+PIECE_R = 12
+PIECE_N = 13
+PIECE_B = 14
+PIECE_P = 15
