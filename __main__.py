@@ -11,7 +11,7 @@ HEIGHT: int = 1000
 
 
 def main():
-    ChessGame.is_white = False
+    ChessGame.is_white = True
     ChessGame.init_board()
 
     AppInstance.set_dimensions(WIDTH, HEIGHT)

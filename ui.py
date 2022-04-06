@@ -53,6 +53,9 @@ class UI(Frame):
         self.render_board()
 
     def click(self, event: Event):
+        # if not ChessGame.player_turn:
+        #    return
+
         self.canvas.delete("selected")
 
         current_column = round(abs(event.x - self.square_size / 2) / self.square_size)
@@ -81,6 +84,7 @@ class UI(Frame):
         elif self.selected_Piece:
             if (current_column, current_row) in self.legal_moves:
                 ChessGame.move_piece(self.selected_Piece, (current_column, current_row))
+                ChessGame.player_turn = False
             self.selected_Piece = None
             self.legal_moves = []
 
