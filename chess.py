@@ -37,5 +37,9 @@ class Chess:
         self.board = board
         return self.board
 
+    def move_piece(self, init_pos: tuple[int, int], final_pos: tuple[int, int]):
+        self.board[final_pos[0]][final_pos[1]] = self.board[init_pos[0]][init_pos[1]]
+        self.board[init_pos[0]][init_pos[1]] = 0
+
 
 ChessGame = Chess()

@@ -60,6 +60,8 @@ class UI(Frame):
         return pieces_images_dic[piece]
 
     def render_pieces(self, board: ndarray):
+        self.canvas.delete("piece")
+
         for y in range(const.COLUMNS):
             for x in range(const.ROWS):
                 if board[y][x] != 0:
@@ -68,7 +70,7 @@ class UI(Frame):
     def draw_piece(self, piece: Piece):
         self.canvas.create_image(piece.coords[0] * self.square_size + self.square_size // 2,
                                  piece.coords[1] * self.square_size + self.square_size // 2,
-                                 image=self.piece_to_img_name(piece.piece_type))
+                                 image=self.piece_to_img_name(piece.piece_type), tag="piece")
 
     def render_board(self):
 
