@@ -3,7 +3,8 @@ from tkinter import Frame, BOTH, Canvas, PhotoImage, Event
 from numpy import ndarray
 
 import const
-from chess import ChessGame
+from engine.engine import MyChessEngine
+from numpy_chess import ChessGame
 from pieces import Piece
 from theme import Color
 from tkinstance import AppInstance
@@ -53,8 +54,8 @@ class UI(Frame):
         self.render_board()
 
     def click(self, event: Event):
-        # if not ChessGame.player_turn:
-        #    return
+        if not ChessGame.player_turn:
+            return
 
         self.canvas.delete("selected")
 
@@ -85,6 +86,11 @@ class UI(Frame):
             if (current_column, current_row) in self.legal_moves:
                 ChessGame.move_piece(self.selected_Piece, (current_column, current_row))
                 ChessGame.player_turn = False
+
+                pos1, pos2 = MyChessEngine.play_bot_move()
+                ChessGame.move_piece(ChessGame.get_piece_at_position(pos1), pos2)
+                ChessGame.player_turn = True
+
             self.selected_Piece = None
             self.legal_moves = []
 

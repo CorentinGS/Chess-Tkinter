@@ -1,4 +1,4 @@
-from chess import ChessGame
+from numpy_chess import ChessGame
 from ui import GUI
 
 

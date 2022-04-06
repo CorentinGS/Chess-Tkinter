@@ -3,6 +3,7 @@ from numpy import ndarray
 
 import callback
 import const
+from engine.engine import get_uci, MyChessEngine
 from pieces import Piece
 from utils import distance_min_2d
 
@@ -50,11 +51,61 @@ class Chess:
         self.board = board
         return self.board
 
+    def is_check_mate(self) -> bool:
+        king = self.get_king()
+        king_piece: Piece = self.get_piece_at_position(king)
+        if self.is_check(king_piece):
+            for pos in self.legal_king(king_piece):
+                target: Piece = self.get_piece_at_position(pos)
+                if not self.is_check(target):
+                    return False
+            return True
+
+        return False
+
+    def is_check(self, king: Piece) -> bool:
+        for x in range(8):
+            for y in range(8):
+                target: Piece = self.get_piece_at_position((x, y))
+                if target.is_white() is not self.is_white and not target.is_empty():
+                    if target.is_pawn():
+                        if king.coords in self.legal_take_pawn(target, True):
+                            return True
+
+                    elif target.is_king():
+                        if king.coords in self.legal_king(target, True):
+                            return True
+                    else:
+                        if king.coords in self.legal_moves(target):
+                            return True
+
+        return False
+
+    def get_king(self) -> tuple[int, int]:
+        value = const.PIECE_K_W if self.is_white else const.PIECE_K_B
+        index: list = list(np.vstack(np.where(self.board == value)).T[0])
+        return index[1], index[0]
+
     def move_piece(self, piece: Piece, final_pos: tuple[int, int]):
         if self.en_passant:
             self.en_passant = False
+        keep = self.board[final_pos[1]][final_pos[0]]
         self.board[final_pos[1]][final_pos[0]] = self.board[piece.coords[1]][piece.coords[0]]
         self.board[piece.coords[1]][piece.coords[0]] = 0
+        king = self.get_king()
+        king_piece: Piece = self.get_piece_at_position(king)
+        if self.is_check(king_piece):
+            self.board[piece.coords[1]][piece.coords[0]] = self.board[final_pos[1]][final_pos[0]]
+            self.board[final_pos[1]][final_pos[0]] = keep
+            return
+
+        if piece.is_empty():
+            return
+
+        callback.update_tkinter_chess_board()
+
+        MyChessEngine.play_move(get_uci(piece.coords, final_pos, self.is_white))
+
         if piece.is_pawn() and abs(piece.coords[1] - final_pos[1]) == 2:
             self.en_passant = True
         if piece.is_king():
@@ -79,8 +130,6 @@ class Chess:
                 self.long_castle = False
             else:
                 self.short_castle = False
-
-        callback.update_tkinter_chess_board()
 
     def get_piece_at_position(self, pos: tuple[int, int]) -> Piece:
         return Piece(self.board[pos[1]][pos[0]], (pos[0], pos[1]))
@@ -185,6 +234,28 @@ class Chess:
     def legal_bishop(self, piece: Piece) -> list:
         return self.legal_diagonal(piece)
 
+    def legal_take_pawn(self, piece: Piece, presume: bool = False) -> list:
+        legal_coords: list[tuple[int, int]] = []
+        diff = -1 if piece.is_white() is self.is_white else 1
+
+        if not piece.coords[0] + 1 > 7:
+            target = self.get_piece_at_position((piece.coords[0] + 1, piece.coords[1] + diff))
+            if presume:
+                legal_coords.append(target.coords)
+            else:
+                if not target.is_empty() and target.is_white() is not piece.is_white():
+                    legal_coords.append(target.coords)
+
+        if not piece.coords[0] - 1 < 0:
+            target = self.get_piece_at_position((piece.coords[0] - 1, piece.coords[1] + diff))
+            if presume:
+                legal_coords.append(target.coords)
+            else:
+                if not target.is_empty() and target.is_white() is not piece.is_white():
+                    legal_coords.append(target.coords)
+
+        return legal_coords
+
     def legal_pawn(self, piece: Piece) -> list:
         legal_coords: list[tuple[int, int]] = []
         diff = -1 if piece.is_white() is self.is_white else 1
@@ -196,15 +267,7 @@ class Chess:
             if target.is_empty():
                 legal_coords.append(target.coords)
 
-        if not piece.coords[0] + 1 > 7:
-            target = self.get_piece_at_position((piece.coords[0] + 1, piece.coords[1] + diff))
-            if not target.is_empty() and target.is_white() is not piece.is_white():
-                legal_coords.append(target.coords)
-
-        if not piece.coords[0] - 1 < 0:
-            target = self.get_piece_at_position((piece.coords[0] - 1, piece.coords[1] + diff))
-            if not target.is_empty() and target.is_white() is not piece.is_white():
-                legal_coords.append(target.coords)
+        legal_coords = legal_coords + self.legal_take_pawn(piece)
 
         if self.en_passant:
             if not piece.coords[0] + 1 > 7:
@@ -226,7 +289,7 @@ class Chess:
             piece)
         return legal_coords
 
-    def legal_king(self, piece: Piece) -> list:
+    def legal_king(self, piece: Piece, presume: bool = False) -> list:
         legal_coords: list[tuple[int, int]] = []
         for x in range(3):
             for y in range(3):
@@ -235,17 +298,21 @@ class Chess:
                         piece.coords[1] - 1 + y > 7 or piece.coords[1] - 1 + y < 0:
                     continue
                 target = self.get_piece_at_position((piece.coords[0] - 1 + x, piece.coords[1] - 1 + y))
-                if target.is_empty() or target.is_white() is not piece.is_white():
+                if presume:
                     legal_coords.append(target.coords)
+                else:
+                    if (target.is_empty() or target.is_white() is not piece.is_white()) and not self.is_check(target):
+                        legal_coords.append(target.coords)
 
-        if self.short_castle:
-            target = self.get_piece_at_position((7, 7))
-            if target.is_rook() and target.is_white() is piece.is_white():
-                legal_coords.append((6, 7))
-        if self.long_castle:
-            target = self.get_piece_at_position((0, 7))
-            if target.is_rook() and target.is_white() is piece.is_white():
-                legal_coords.append((2, 7))
+        if not presume:
+            if self.short_castle:
+                target = self.get_piece_at_position((7, 7))
+                if target.is_rook() and target.is_white() is piece.is_white() and not self.is_check(target):
+                    legal_coords.append((6, 7))
+            if self.long_castle:
+                target = self.get_piece_at_position((0, 7))
+                if target.is_rook() and target.is_white() is piece.is_white() and not self.is_check(target):
+                    legal_coords.append((2, 7))
 
         return legal_coords
 
@@ -290,3 +357,7 @@ class Chess:
 
 
 ChessGame = Chess()
+
+
+def play_move(pos1: tuple[int, int], pos2: tuple[int, int]):
+    ChessGame.move_piece(ChessGame.get_piece_at_position(pos1), pos2)
