@@ -27,6 +27,8 @@ class Chess:
         self.board: ndarray = np.zeros((8, 8), dtype='int32')
         self.player_turn: bool = is_white
         self.en_passant: bool = False
+        self.short_castle: bool = True
+        self.long_castle: bool = True
 
     def init_board(self) -> ndarray:
         board: ndarray = np.zeros((8, 8), dtype='int32')
@@ -48,13 +50,36 @@ class Chess:
         self.board = board
         return self.board
 
-    def move_piece(self, piece:Piece, final_pos: tuple[int, int]):
+    def move_piece(self, piece: Piece, final_pos: tuple[int, int]):
         if self.en_passant:
             self.en_passant = False
         self.board[final_pos[1]][final_pos[0]] = self.board[piece.coords[1]][piece.coords[0]]
         self.board[piece.coords[1]][piece.coords[0]] = 0
         if piece.is_pawn() and abs(piece.coords[1] - final_pos[1]) == 2:
             self.en_passant = True
+        if piece.is_king():
+            if piece.is_white() is self.is_white:
+                self.short_castle, self.long_castle = False, False
+
+            if piece.is_king() and (piece.coords[0] - final_pos[0] == -2):
+                target = self.get_piece_at_position((7, piece.coords[1]))
+                self.move_piece(target, (final_pos[0] - 1, final_pos[1]))
+            elif piece.is_king() and (piece.coords[0] - final_pos[0] == 2):
+                target = self.get_piece_at_position((0, piece.coords[1]))
+                self.move_piece(target, (final_pos[0] + 1, final_pos[1]))
+
+        if piece.is_rook() and piece.coords == (7, 7):
+            if self.is_white:
+                self.short_castle = False
+            else:
+                self.long_castle = False
+
+        elif piece.is_rook() and piece.coords == (0, 7):
+            if self.is_white:
+                self.long_castle = False
+            else:
+                self.short_castle = False
+
         callback.update_tkinter_chess_board()
 
     def get_piece_at_position(self, pos: tuple[int, int]) -> Piece:
@@ -171,23 +196,28 @@ class Chess:
             if target.is_empty():
                 legal_coords.append(target.coords)
 
-        target = self.get_piece_at_position((piece.coords[0] + 1, piece.coords[1] + diff))
-        if not target.is_empty() and target.is_white() is not piece.is_white():
-            legal_coords.append(target.coords)
+        if not piece.coords[0] + 1 > 7:
+            target = self.get_piece_at_position((piece.coords[0] + 1, piece.coords[1] + diff))
+            if not target.is_empty() and target.is_white() is not piece.is_white():
+                legal_coords.append(target.coords)
 
-        target = self.get_piece_at_position((piece.coords[0] - 1, piece.coords[1] + diff))
-        if not target.is_empty() and target.is_white() is not piece.is_white():
-            legal_coords.append(target.coords)
+        if not piece.coords[0] - 1 < 0:
+            target = self.get_piece_at_position((piece.coords[0] - 1, piece.coords[1] + diff))
+            if not target.is_empty() and target.is_white() is not piece.is_white():
+                legal_coords.append(target.coords)
 
         if self.en_passant:
-            target = self.get_piece_at_position((piece.coords[0] + 1, piece.coords[1]))
-            if not target.is_empty():
-                if target.is_pawn() and target.is_white() is not piece.is_white():
-                    legal_coords.append((piece.coords[0] + 1, piece.coords[1] + diff))
-            target = self.get_piece_at_position((piece.coords[0] - 1, piece.coords[1]))
-            if not target.is_empty():
-                if target.is_pawn() and target.is_white() is not piece.is_white():
-                    legal_coords.append((piece.coords[0] - 1, piece.coords[1] + diff))
+            if not piece.coords[0] + 1 > 7:
+                target = self.get_piece_at_position((piece.coords[0] + 1, piece.coords[1]))
+                if not target.is_empty():
+                    if target.is_pawn() and target.is_white() is not piece.is_white():
+                        legal_coords.append((piece.coords[0] + 1, piece.coords[1] + diff))
+            if not piece.coords[0] - 1 < 0:
+                target = self.get_piece_at_position((piece.coords[0] - 1, piece.coords[1]))
+
+                if not target.is_empty():
+                    if target.is_pawn() and target.is_white() is not piece.is_white():
+                        legal_coords.append((piece.coords[0] - 1, piece.coords[1] + diff))
 
         return legal_coords
 
@@ -203,11 +233,19 @@ class Chess:
                 if x == 1 and y == 1 or \
                         piece.coords[0] - 1 + x > 7 or piece.coords[0] - 1 + x < 0 or \
                         piece.coords[1] - 1 + y > 7 or piece.coords[1] - 1 + y < 0:
-
                     continue
                 target = self.get_piece_at_position((piece.coords[0] - 1 + x, piece.coords[1] - 1 + y))
                 if target.is_empty() or target.is_white() is not piece.is_white():
                     legal_coords.append(target.coords)
+
+        if self.short_castle:
+            target = self.get_piece_at_position((7, 7))
+            if target.is_rook() and target.is_white() is piece.is_white():
+                legal_coords.append((6, 7))
+        if self.long_castle:
+            target = self.get_piece_at_position((0, 7))
+            if target.is_rook() and target.is_white() is piece.is_white():
+                legal_coords.append((2, 7))
 
         return legal_coords
 
