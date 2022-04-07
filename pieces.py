@@ -14,76 +14,77 @@ def is_empty(value: int) -> bool:
 
 def is_rook(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece rook
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece rook
+    """
     return str(value)[1] == '2'
 
 
 def is_queen(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece queen
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece queen
+    """
     return str(value)[1] == '1'
 
 
 def is_king(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece king
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece king
+    """
     return str(value)[1] == '0'
 
 
 def is_bishop(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece bishop
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece bishop
+    """
     return str(value)[1] == '4'
 
 
 def is_knight(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece knight
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece knight
+    """
     return str(value)[1] == '3'
 
 
 def is_pawn(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece pawn
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece pawn
+    """
     return str(value)[1] == '5'
 
 
 def is_white(value: int) -> bool:
     """
-     :rtype: bool
-     :param value: Piece value identifier
-     :return: is piece white
-     """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece white
+    """
     return str(value)[0] == '1'
 
 
 class Piece:
 
-    def __init__(self, is_white: bool, coords: tuple[int, int], piece_type: int):
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int], piece_type: int):
         """
-        :param is_white: is piece white ? 
+        :param is_piece_white: is piece white ? 
         :param coords: piece coords on array
         :param piece_type: piece type identifier
         """
-        self.is_white: bool = is_white
+
+        self.is_white: bool = is_piece_white
         self.coords: tuple[int, int] = coords
         self.piece_type = piece_type
 
@@ -98,17 +99,17 @@ class Piece:
         value = game.MyGame.chess.board[pos[1]][pos[0]]
         if is_empty(value):
             return Empty((pos[0], pos[1]))
-        elif is_rook(value):
+        if is_rook(value):
             return Rook(is_white(value), (pos[0], pos[1]))
-        elif is_bishop(value):
+        if is_bishop(value):
             return Bishop(is_white(value), (pos[0], pos[1]))
-        elif is_pawn(value):
+        if is_pawn(value):
             return Pawn(is_white(value), (pos[0], pos[1]))
-        elif is_queen(value):
+        if is_queen(value):
             return Queen(is_white(value), (pos[0], pos[1]))
-        elif is_king(value):
+        if is_king(value):
             return King(is_white(value), (pos[0], pos[1]))
-        elif is_knight(value):
+        if is_knight(value):
             return Knight(is_white(value), (pos[0], pos[1]))
 
         return Empty((pos[0], pos[1]))
@@ -219,10 +220,10 @@ class Empty(Piece):
 
 
 class Rook(Piece):
-    def __init__(self, is_white: bool, coords: tuple[int, int]):
-        self.piece_type = const.PIECE_R_W if is_white else const.PIECE_R_B
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+        self.piece_type = const.PIECE_R_W if is_piece_white else const.PIECE_R_B
 
-        super().__init__(is_white, coords, self.piece_type)
+        super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
         legal_coords: list[tuple[int, int]] = self.legal_row() + self.legal_column()
@@ -231,20 +232,20 @@ class Rook(Piece):
 
 
 class Bishop(Piece):
-    def __init__(self, is_white: bool, coords: tuple[int, int]):
-        self.piece_type = const.PIECE_B_W if is_white else const.PIECE_B_B
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+        self.piece_type = const.PIECE_B_W if is_piece_white else const.PIECE_B_B
 
-        super().__init__(is_white, coords, self.piece_type)
+        super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
         return self.legal_diagonal()
 
 
 class Pawn(Piece):
-    def __init__(self, is_white: bool, coords: tuple[int, int]):
-        self.piece_type = const.PIECE_P_W if is_white else const.PIECE_P_B
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+        self.piece_type = const.PIECE_P_W if is_piece_white else const.PIECE_P_B
 
-        super().__init__(is_white, coords, self.piece_type)
+        super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
         legal_coords: list[tuple[int, int]] = []
@@ -285,9 +286,9 @@ class Pawn(Piece):
 
 
 class Queen(Piece):
-    def __init__(self, is_white: bool, coords: tuple[int, int]):
-        self.piece_type = const.PIECE_Q_W if is_white else const.PIECE_Q_B
-        super().__init__(is_white, coords, self.piece_type)
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+        self.piece_type = const.PIECE_Q_W if is_piece_white else const.PIECE_Q_B
+        super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
         legal_coords: list[tuple[int, int]] = self.legal_row() + \
@@ -297,9 +298,9 @@ class Queen(Piece):
 
 
 class Knight(Piece):
-    def __init__(self, is_white: bool, coords: tuple[int, int]):
-        self.piece_type = const.PIECE_N_W if is_white else const.PIECE_N_B
-        super().__init__(is_white, coords, self.piece_type)
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+        self.piece_type = const.PIECE_N_W if is_piece_white else const.PIECE_N_B
+        super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
         legal_coords: list[tuple[int, int]] = []
@@ -326,9 +327,9 @@ class Knight(Piece):
 
 
 class King(Piece):
-    def __init__(self, is_white: bool, coords: tuple[int, int]):
-        self.piece_type = const.PIECE_K_W if is_white else const.PIECE_K_B
-        super().__init__(is_white, coords, self.piece_type)
+    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+        self.piece_type = const.PIECE_K_W if is_piece_white else const.PIECE_K_B
+        super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self, presume: bool = False):
         legal_coords: list[tuple[int, int]] = []
