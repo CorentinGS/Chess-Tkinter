@@ -37,3 +37,7 @@ This project was made as a school project. It won't be maintained.
 However, I might rewrite it in the future in another lang as a learning purpose.
 
 Otherwise, if you want to contribute feel free to open a pull request.
+
+## Thanks 
+
+- [TriForMine](https://github.com/TriForMine/py-chess-tk/) for the images and the project idea
