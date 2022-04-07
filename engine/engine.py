@@ -28,9 +28,7 @@ class ChessEngine:
             r"./engine/stockfish_14.1_linux_x64")
 
     def play_move(self, uci: str):
-
         move = chess.Move.from_uci(uci)
-
         self.board.push(move)
 
     def play_bot_move(self) -> [tuple[int, int], tuple[int, int]]:
