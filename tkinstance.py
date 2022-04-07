@@ -11,5 +11,3 @@ class TkInstance:
         self.width: int = width
         self.height: int = height
 
-
-AppInstance: TkInstance = TkInstance()

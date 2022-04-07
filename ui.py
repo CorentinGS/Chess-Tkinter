@@ -1,13 +1,12 @@
-from tkinter import Frame, BOTH, Canvas, PhotoImage, Event
+from tkinter import Frame, BOTH, Canvas, PhotoImage, Event, messagebox
 
 from numpy import ndarray
 
 import const
+import game
 from engine.engine import MyChessEngine
-from numpy_chess import ChessGame
-from pieces import Piece
-from theme import Color
-from tkinstance import AppInstance
+from pieces import Piece, Empty
+from utils.theme import Color
 
 pieces_images_dic = {}
 
@@ -27,10 +26,12 @@ class UI(Frame):
         self.legal_moves: list = []
         self.img = None
         self.pack(fill=BOTH, expand=True)
-        self.square_size: float = AppInstance.width / const.COLUMNS
-        self.canvas: Canvas = Canvas(AppInstance.root, height=AppInstance.height, width=AppInstance.width)
+        self.square_size: float = game.MyGame.app_instance.width / const.COLUMNS
+        self.canvas: Canvas = Canvas(game.MyGame.app_instance.root,
+                                     height=game.MyGame.app_instance.height,
+                                     width=game.MyGame.app_instance.width)
         self.color: Color = Color()
-        self.winfo_toplevel().title("ChessBoard")
+        self.winfo_toplevel().title("ChessBoard GUI 1.0")
         self.winfo_toplevel().resizable(False, False)
         self.pieces_images_name = {
             const.PIECE_K_W: "king_white",
@@ -53,43 +54,56 @@ class UI(Frame):
 
         self.render_board()
 
+    def display_legal_moves(self, piece, current_column, current_row):
+        self.selected_Piece = piece
+        self.canvas.create_rectangle(current_column * self.square_size, current_row * self.square_size,
+                                     current_column * self.square_size + self.square_size,
+                                     current_row * self.square_size + self.square_size, outline="#887CE6",
+                                     tags="selected")
+
+        self.legal_moves: list = piece.legal_moves()
+        for pos in self.legal_moves:
+            x, y = pos
+            self.canvas.create_oval(
+                x * self.square_size + self.square_size // 2 - self.square_size * 0.2,
+                y * self.square_size + self.square_size // 2 - self.square_size * 0.2,
+                x * self.square_size + self.square_size // 2 + self.square_size * 0.2,
+                y * self.square_size + self.square_size // 2 + self.square_size * 0.2,
+                fill="#887CE6",
+                outline="", tags="selected"
+            )
+            self.canvas.tag_raise("piece")
+
     def click(self, event: Event):
-        if not ChessGame.player_turn:
+        if not game.MyGame.player_turn:
             return
+
+        if game.MyGame.chess_engine.board.is_game_over():
+            game.MyGame.chess_engine.board.result()
+            messagebox.showinfo(
+                "Game is over",
+                f"Checkmate: {game.MyGame.chess_engine.board.result()}"
+            )
+            game.MyGame.restart_game()
 
         self.canvas.delete("selected")
 
         current_column = round(abs(event.x - self.square_size / 2) / self.square_size)
         current_row = round(abs(event.y - self.square_size / 2) / self.square_size)
-        piece: Piece = ChessGame.get_piece_at_position((current_column, current_row))
-        if piece.piece_type != const.PIECE_NONE and ChessGame.is_white is piece.is_white():
-            self.selected_Piece = piece
-            self.canvas.create_rectangle(current_column * self.square_size, current_row * self.square_size,
-                                         current_column * self.square_size + self.square_size,
-                                         current_row * self.square_size + self.square_size, outline="#887CE6",
-                                         tags="selected")
+        piece = Piece.get_piece_at_position((current_column, current_row))
 
-            self.legal_moves: list = ChessGame.legal_moves(self.selected_Piece)
-            for pos in self.legal_moves:
-                x, y = pos
-                self.canvas.create_oval(
-                    x * self.square_size + self.square_size // 2 - self.square_size * 0.2,
-                    y * self.square_size + self.square_size // 2 - self.square_size * 0.2,
-                    x * self.square_size + self.square_size // 2 + self.square_size * 0.2,
-                    y * self.square_size + self.square_size // 2 + self.square_size * 0.2,
-                    fill="#887CE6",
-                    outline="", tags="selected"
-                )
-                self.canvas.tag_raise("piece")
+        if type(piece) is not Empty and game.MyGame.is_white is piece.is_white:
+            self.display_legal_moves(piece, current_column, current_row)
 
         elif self.selected_Piece:
             if (current_column, current_row) in self.legal_moves:
-                ChessGame.move_piece(self.selected_Piece, (current_column, current_row))
-                ChessGame.player_turn = False
+                if game.MyGame.chess.move_piece(self.selected_Piece, (current_column, current_row)):
+                    game.MyGame.player_turn = False
+                    game.MyGame.gui.render_pieces(game.MyGame.chess.board)
+                    game.MyGame.app_instance.root.update()
 
-                pos1, pos2 = MyChessEngine.play_bot_move()
-                ChessGame.move_piece(ChessGame.get_piece_at_position(pos1), pos2)
-                ChessGame.player_turn = True
+                    if game.MyGame.player_turn is False:
+                        game.MyGame.play_engine()
 
             self.selected_Piece = None
             self.legal_moves = []
@@ -111,7 +125,8 @@ class UI(Frame):
         for y in range(const.COLUMNS):
             for x in range(const.ROWS):
                 if board[y][x] != 0:
-                    self.draw_piece(Piece(board[y][x], (x, y)))
+                    piece = Piece(str(board[y][x])[0] == '1', (x, y), board[y][x])
+                    self.draw_piece(piece)
 
     def draw_piece(self, piece: Piece):
         self.canvas.create_image(piece.coords[0] * self.square_size + self.square_size // 2,
@@ -142,6 +157,3 @@ class UI(Frame):
                     fill=current_color,
                     outline="",
                 )
-
-
-GUI = UI()
