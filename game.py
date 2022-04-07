@@ -46,11 +46,11 @@ class Game:
         self.app_instance.root.mainloop()
 
     def restart_game(self):
+        self.is_white = not self.is_white
         self.chess_engine.init_board()
         del self.chess
         self.chess = Chess()
         self.chess.board = self.chess.init_board(self.is_white)
-        self.is_white = not self.is_white
         self.gui.render_pieces(self.chess.board)
 
         if self.is_white is False:
