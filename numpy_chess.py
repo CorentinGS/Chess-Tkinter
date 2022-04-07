@@ -41,16 +41,17 @@ class Chess:
         self.board[final_pos[1]][final_pos[0]] = self.board[piece.coords[1]][piece.coords[0]]
         self.board[piece.coords[1]][piece.coords[0]] = 0
 
-        king = Piece.get_piece_at_position(self.get_king())
-        if type(king) is King and king.is_check():
-            self.board[piece.coords[1]][piece.coords[0]] = self.board[final_pos[1]][final_pos[0]]
-            self.board[final_pos[1]][final_pos[0]] = keep
-            return False
+        if not escape:
+            king = Piece.get_piece_at_position(self.get_king())
+            if type(king) is King and king.is_check():
+                self.board[piece.coords[1]][piece.coords[0]] = self.board[final_pos[1]][final_pos[0]]
+                self.board[final_pos[1]][final_pos[0]] = keep
+                return False
 
         game.MyGame.gui.render_pieces(game.MyGame.chess.board)
 
         if not escape:
-            game.MyGame.chess_engine.play_move(get_uci(piece.coords, final_pos, game.MyGame.is_white))
+            game.MyGame.chess_engine.board.push_uci(get_uci(piece.coords, final_pos))
 
         if type(piece) is Pawn and abs(piece.coords[1] - final_pos[1]) == 2:
             self.en_passant = True

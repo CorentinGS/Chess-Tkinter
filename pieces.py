@@ -4,40 +4,85 @@ from utils.utils import distance_min_2d
 
 
 def is_empty(value: int) -> bool:
+    """
+    :rtype: bool
+    :param value: Piece value identifier
+    :return: is piece empty
+    """
     return value == const.PIECE_NONE
 
 
 def is_rook(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece rook
+     """
     return str(value)[1] == '2'
 
 
 def is_queen(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece queen
+     """
     return str(value)[1] == '1'
 
 
 def is_king(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece king
+     """
     return str(value)[1] == '0'
 
 
 def is_bishop(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece bishop
+     """
     return str(value)[1] == '4'
 
 
 def is_knight(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece knight
+     """
     return str(value)[1] == '3'
 
 
 def is_pawn(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece pawn
+     """
     return str(value)[1] == '5'
 
 
 def is_white(value: int) -> bool:
+    """
+     :rtype: bool
+     :param value: Piece value identifier
+     :return: is piece white
+     """
     return str(value)[0] == '1'
 
 
 class Piece:
 
     def __init__(self, is_white: bool, coords: tuple[int, int], piece_type: int):
+        """
+        :param is_white: is piece white ? 
+        :param coords: piece coords on array
+        :param piece_type: piece type identifier
+        """
         self.is_white: bool = is_white
         self.coords: tuple[int, int] = coords
         self.piece_type = piece_type
@@ -47,7 +92,7 @@ class Piece:
         """
         :param pos: position to check
         :return: piece at given pos
-        :rtype: Piece
+        :rtype: Piece | Empty | King | Queen | Knight | Bishop | Pawn | Rook
         """
 
         value = game.MyGame.chess.board[pos[1]][pos[0]]
@@ -68,7 +113,10 @@ class Piece:
 
         return Empty((pos[0], pos[1]))
 
-    def legal_row(self) -> list:
+    def legal_row(self) -> list[tuple[int, int]]:
+        """
+        Legal row square
+        """
         legal_coords: list[tuple[int, int]] = []
         for x in range(0, self.coords[0]):
             target = Piece.get_piece_at_position((self.coords[0] - x - 1, self.coords[1]))
@@ -92,7 +140,10 @@ class Piece:
 
         return legal_coords
 
-    def legal_column(self) -> list:
+    def legal_column(self) -> list[tuple[int, int]]:
+        """
+        Legal column square
+        """
         legal_coords: list[tuple[int, int]] = []
         for y in range(0, self.coords[1]):
             target = Piece.get_piece_at_position((self.coords[0], self.coords[1] - y - 1))

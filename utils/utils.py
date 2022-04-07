@@ -2,6 +2,7 @@ import numpy as np
 from numpy import ndarray
 import const
 
+
 def distance_min_2d(pos_1: tuple[int, int], pos_2: tuple[int, int]) -> int:
     """
     :param pos_1: first position
@@ -13,6 +14,11 @@ def distance_min_2d(pos_1: tuple[int, int], pos_2: tuple[int, int]) -> int:
 
 
 def init_board(is_white: bool = True) -> ndarray:
+    """
+    :param is_white: is player white ?
+    :return: initial board array
+    :rtype: ndarray
+    """
     board: ndarray = np.zeros((8, 8), dtype='int32')
     if not is_white:
         board[0] = const.initial_white_row_2
