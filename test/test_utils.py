@@ -1,11 +1,10 @@
 from unittest import TestCase
 
 import numpy as np
-from numpy import array, int32, ndarray
+from numpy import array, int32
 
-import const
 from utils import utils
-from utils.utils import init_board, distance_min_2d
+from utils.utils import distance_min_2d
 
 initial_board_white = array([[22, 23, 24, 21, 20, 24, 23, 22],
                              [25, 25, 25, 25, 25, 25, 25, 25],
