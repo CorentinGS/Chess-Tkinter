@@ -364,7 +364,6 @@ class King(Piece):
                 target = Piece.get_piece_at_position((x, y))
                 if self.makes_check(target):
                     return True
-        del target
         return False
 
     def makes_check(self, attacker) -> bool:
@@ -379,6 +378,4 @@ class King(Piece):
             else:
                 if self.coords in attacker.legal_moves():
                     return True
-
-        del attacker
         return False
