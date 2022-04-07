@@ -1,4 +1,5 @@
 import const
+import sys
 import ui
 from engine.engine import ChessEngine
 from numpy_chess import Chess
@@ -17,7 +18,7 @@ class Game:
 
     def __init__(self, is_white: bool = True):
         """
-        :param is player white:
+        :param is_white: is player white
         """
         self.is_white: bool = is_white
         self.player_turn: bool = is_white
@@ -46,11 +47,11 @@ class Game:
         self.app_instance.root.mainloop()
 
     def restart_game(self):
+        self.is_white = not self.is_white
         self.chess_engine.init_board()
         del self.chess
         self.chess = Chess()
         self.chess.board = self.chess.init_board(self.is_white)
-        self.is_white = not self.is_white
         self.gui.render_pieces(self.chess.board)
 
         if self.is_white is False:
@@ -59,7 +60,7 @@ class Game:
     def on_closing(self):
         self.chess_engine.engine.close()
         self.app_instance.root.destroy()
-        exit()
+        sys.exit()
 
     def play_engine(self):
         """

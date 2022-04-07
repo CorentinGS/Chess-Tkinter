@@ -20,8 +20,8 @@ def uci_to_numpy(uci: str) -> (tuple[int, int], tuple[int, int]):
     is_white = game.MyGame.is_white
     x1 = fileDict.index(uci[0]) if is_white else 7 - fileDict.index(uci[0])
     x2 = fileDict.index(uci[2]) if is_white else 7 - fileDict.index(uci[2])
-    y1 = int(uci[1]) - 1 if  not is_white else 7 - int(uci[1]) + 1
-    y2 = int(uci[3]) - 1 if  not is_white else 7 - int(uci[3]) + 1
+    y1 = int(uci[1]) - 1 if not is_white else 7 - int(uci[1]) + 1
+    y2 = int(uci[3]) - 1 if not is_white else 7 - int(uci[3]) + 1
     return (x1, y1), (x2, y2)
 
 
