@@ -1,4 +1,5 @@
 import const
+import sys
 import ui
 from engine.engine import ChessEngine
 from numpy_chess import Chess
@@ -59,7 +60,7 @@ class Game:
     def on_closing(self):
         self.chess_engine.engine.close()
         self.app_instance.root.destroy()
-        exit()
+        sys.exit()
 
     def play_engine(self):
         """
