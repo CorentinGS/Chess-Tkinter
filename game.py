@@ -17,7 +17,7 @@ class Game:
 
     def __init__(self, is_white: bool = True):
         """
-        :param is player white:
+        :param is_white: is player white
         """
         self.is_white: bool = is_white
         self.player_turn: bool = is_white

@@ -15,7 +15,6 @@ PIECE_B_B = 24
 PIECE_P_B = 25
 PIECE_NONE = 0
 
-
 initial_white_row = [PIECE_R_W, PIECE_N_W, PIECE_B_W, PIECE_Q_W, PIECE_K_W,
                      PIECE_B_W, PIECE_N_W, PIECE_R_W]
 

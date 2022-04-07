@@ -4,7 +4,6 @@ from numpy import ndarray
 
 import const
 import game
-from engine.engine import MyChessEngine
 from pieces import Piece, Empty
 from utils.theme import Color
 
