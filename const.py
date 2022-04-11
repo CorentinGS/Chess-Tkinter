@@ -1,6 +1,8 @@
+# Chess board consts
 COLUMNS: int = 8
 ROWS: int = 8
 
+# Pieces consts
 PIECE_K_W = 10
 PIECE_Q_W = 11
 PIECE_R_W = 12
@@ -15,6 +17,7 @@ PIECE_B_B = 24
 PIECE_P_B = 25
 PIECE_NONE = 0
 
+# Initial rows
 initial_white_row = [PIECE_R_W, PIECE_N_W, PIECE_B_W, PIECE_Q_W, PIECE_K_W,
                      PIECE_B_W, PIECE_N_W, PIECE_R_W]
 
@@ -27,6 +30,7 @@ initial_black_row = [PIECE_R_B, PIECE_N_B, PIECE_B_B, PIECE_Q_B, PIECE_K_B,
 initial_black_row_2 = [PIECE_R_B, PIECE_N_B, PIECE_B_B, PIECE_K_B, PIECE_Q_B,
                        PIECE_B_B, PIECE_N_B, PIECE_R_B]
 
+# Enum
 GAME_IN_PROGRESS = 0
 GAME_WIN_WHITE = 1
 GAME_WIN_BLACK = 2

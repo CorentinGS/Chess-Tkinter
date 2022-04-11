@@ -169,6 +169,9 @@ class Piece:
         return legal_coords
 
     def legal_diagonal(self) -> list:
+        """
+        Legal diagonals square
+        """
         legal_coords: list[tuple[int, int]] = []
         for y in range(0, distance_min_2d(self.coords, (0, 0))):
             target = Piece.get_piece_at_position((self.coords[0] - y - 1, self.coords[1] - y - 1))

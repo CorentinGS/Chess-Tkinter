@@ -6,10 +6,12 @@ from numpy_chess import Chess
 from pieces import Piece
 from tkinstance import TkInstance
 
+# Tkinter const
 WIDTH: int = 1000
 HEIGHT: int = 1000
 
 
+# Game class
 class Game:
     chess: Chess
     chess_engine: ChessEngine
@@ -29,31 +31,51 @@ class Game:
         """
         Start the game
         """
+
+        # Setup logic
         self.chess = Chess()
         self.chess.board = self.chess.init_board(self.is_white)
+
+        # Start chess engine
         self.chess_engine = ChessEngine()
 
+        # Tkinter instance
         self.app_instance = TkInstance()
         self.app_instance.set_dimensions(WIDTH, HEIGHT)
         self.app_instance.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        # Chess GUI
         self.gui = ui.UI()
 
+        # Render GUI
         self.gui.render_board()
         self.gui.render_pieces(self.chess.board)
 
+        # Makes engine plays the first move if player is black
         if self.is_white is False:
             self.play_engine()
 
+        # Main loooooooooooooooooooooooooooooooooooooooooooop
         self.app_instance.root.mainloop()
 
     def restart_game(self):
-        self.is_white = not self.is_white
+        """
+        Restart game
+        """
+        # Change color
+        # self.is_white = not self.is_white # Was used as testing but it should be asked to the user
+
+        # Init board
         self.chess_engine.init_board()
+        # Delete old structs
         del self.chess
+        # Chess logic
         self.chess = Chess()
         self.chess.board = self.chess.init_board(self.is_white)
+        # Render pieces
         self.gui.render_pieces(self.chess.board)
 
+        # Makes engine plays the first move if player is black
         if self.is_white is False:
             self.play_engine()
 
