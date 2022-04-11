@@ -41,3 +41,32 @@ Otherwise, if you want to contribute feel free to open a pull request.
 ## Thanks 
 
 - [TriForMine](https://github.com/TriForMine/py-chess-tk/) for the images and the project idea
+
+# Installation
+
+## Install python 3.10 
+
+Install Conda to manage python env
+```shell
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh -p $HOME/miniconda3
+```
+
+Install python 3.10
+```shell
+conda create -n py310 python=3.10
+conda activate py310
+```
+
+Install dependencies
+```shell
+pip install -r requirements.txt
+```
+
+Run it 
+```shell
+python3 __main__.py
+```
+
+
