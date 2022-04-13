@@ -1,9 +1,11 @@
 import numpy as np
 from numpy import ndarray
 import const
+from typing import Tuple
 
 
-def distance_min_2d(pos_1: tuple[int, int], pos_2: tuple[int, int]) -> int:
+
+def distance_min_2d(pos_1: Tuple[int, int], pos_2: Tuple[int, int]) -> int:
     """
     :param pos_1: first position
     :param pos_2: second position

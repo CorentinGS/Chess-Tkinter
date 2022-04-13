@@ -6,6 +6,8 @@ from engine.engine import get_uci
 from pieces import Piece, Pawn, King, Rook, Empty
 import const
 from utils import utils
+from typing import Tuple
+
 
 
 class Chess:
@@ -26,7 +28,7 @@ class Chess:
         self.board = utils.init_board(is_white)
         return self.board
 
-    def get_king(self) -> tuple[int, int]:
+    def get_king(self) -> Tuple[int, int]:
         """
         Gets king position
         :return: King position
@@ -35,7 +37,7 @@ class Chess:
         index: list = list(np.vstack(np.where(self.board == value)).T[0])
         return index[1], index[0]
 
-    def move_piece(self, piece: Piece, final_pos: tuple[int, int], escape: bool = False) -> bool:
+    def move_piece(self, piece: Piece, final_pos: Tuple[int, int], escape: bool = False) -> bool:
         """
         Moves a piece on the board
         :param piece: Piece to move

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import chess
 import chess.engine
 
@@ -6,7 +8,7 @@ import game
 fileDict = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
 
-def get_uci(init: tuple[int, int], end: tuple[int, int]) -> str:
+def get_uci(init: Tuple[int, int], end: Tuple[int, int]) -> str:
     """
     Converts a move to UCI
     :param init: initial position
@@ -26,7 +28,7 @@ def get_uci(init: tuple[int, int], end: tuple[int, int]) -> str:
     return f"{file1}{row1}{file2}{row2}"
 
 
-def uci_to_numpy(uci: str) -> (tuple[int, int], tuple[int, int]):
+def uci_to_numpy(uci: str) -> (Tuple[int, int], Tuple[int, int]):
     """
     Converts an uci string to numpy coords
     :param uci: uci string
@@ -50,7 +52,7 @@ class ChessEngine:
     def init_board(self):
         self.board: chess.Board = chess.Board(chess.STARTING_FEN)
 
-    def get_engine_move(self) -> chess.Move | str | int:
+    def get_engine_move(self):
         """
         Gets the engine move
         :return: engine move
@@ -73,7 +75,7 @@ class ChessEngine:
         move = chess.Move.from_uci(uci)
         self.board.push(move)
 
-    def play_bot_move(self) -> [tuple[int, int], tuple[int, int]]:
+    def play_bot_move(self) -> [Tuple[int, int], Tuple[int, int]]:
         """
         Plays a bot move using the engine
         :return Pos1 and Pos2 of the bot move

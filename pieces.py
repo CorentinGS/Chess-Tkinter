@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import const
 import game
 from utils.utils import distance_min_2d
@@ -77,7 +79,7 @@ def is_white(value: int) -> bool:
 
 class Piece:
 
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int], piece_type: int):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int], piece_type: int):
         """
         :param is_piece_white: is piece white ? 
         :param coords: piece coords on array
@@ -85,11 +87,11 @@ class Piece:
         """
 
         self.is_white: bool = is_piece_white
-        self.coords: tuple[int, int] = coords
+        self.coords: Tuple[int, int] = coords
         self.piece_type = piece_type
 
     @staticmethod
-    def get_piece_at_position(pos: tuple[int, int]):
+    def get_piece_at_position(pos: Tuple[int, int]):
         """
         :param pos: position to check
         :return: piece at given pos
@@ -114,11 +116,11 @@ class Piece:
 
         return Empty((pos[0], pos[1]))
 
-    def legal_row(self) -> list[tuple[int, int]]:
+    def legal_row(self) -> list:
         """
         Legal row square
         """
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list = []
         for x in range(0, self.coords[0]):
             target = Piece.get_piece_at_position((self.coords[0] - x - 1, self.coords[1]))
             if type(target) is Empty:
@@ -141,11 +143,11 @@ class Piece:
 
         return legal_coords
 
-    def legal_column(self) -> list[tuple[int, int]]:
+    def legal_column(self) -> list:
         """
         Legal column square
         """
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list = []
         for y in range(0, self.coords[1]):
             target = Piece.get_piece_at_position((self.coords[0], self.coords[1] - y - 1))
             if type(target) is Empty:
@@ -172,7 +174,7 @@ class Piece:
         """
         Legal diagonals square
         """
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list[Tuple[int, int]] = []
         for y in range(0, distance_min_2d(self.coords, (0, 0))):
             target = Piece.get_piece_at_position((self.coords[0] - y - 1, self.coords[1] - y - 1))
             if type(target) is Empty:
@@ -217,25 +219,25 @@ class Piece:
 
 
 class Empty(Piece):
-    def __init__(self, coords: tuple[int, int]):
+    def __init__(self, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_NONE
         super().__init__(False, coords, self.piece_type)
 
 
 class Rook(Piece):
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_R_W if is_piece_white else const.PIECE_R_B
 
         super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
-        legal_coords: list[tuple[int, int]] = self.legal_row() + self.legal_column()
+        legal_coords: list[Tuple[int, int]] = self.legal_row() + self.legal_column()
 
         return legal_coords
 
 
 class Bishop(Piece):
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_B_W if is_piece_white else const.PIECE_B_B
 
         super().__init__(is_piece_white, coords, self.piece_type)
@@ -245,13 +247,13 @@ class Bishop(Piece):
 
 
 class Pawn(Piece):
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_P_W if is_piece_white else const.PIECE_P_B
 
         super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list[Tuple[int, int]] = []
         diff = -1 if self.is_white is game.MyGame.is_white else 1
         target = Piece.get_piece_at_position((self.coords[0], self.coords[1] + diff))
         if type(target) is Empty:
@@ -266,7 +268,7 @@ class Pawn(Piece):
         return legal_coords
 
     def legal_take_pawn(self, presume: bool = False) -> list:
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list[Tuple[int, int]] = []
         diff = -1 if self.is_white is game.MyGame.is_white else 1
 
         if not self.coords[0] + 1 > 7:
@@ -289,24 +291,24 @@ class Pawn(Piece):
 
 
 class Queen(Piece):
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_Q_W if is_piece_white else const.PIECE_Q_B
         super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
-        legal_coords: list[tuple[int, int]] = self.legal_row() + \
+        legal_coords: list[Tuple[int, int]] = self.legal_row() + \
                                               self.legal_column() + \
                                               self.legal_diagonal()
         return legal_coords
 
 
 class Knight(Piece):
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_N_W if is_piece_white else const.PIECE_N_B
         super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self):
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list[Tuple[int, int]] = []
         diff = [
             (1, -2),
             (1, 2),
@@ -330,12 +332,12 @@ class Knight(Piece):
 
 
 class King(Piece):
-    def __init__(self, is_piece_white: bool, coords: tuple[int, int]):
+    def __init__(self, is_piece_white: bool, coords: Tuple[int, int]):
         self.piece_type = const.PIECE_K_W if is_piece_white else const.PIECE_K_B
         super().__init__(is_piece_white, coords, self.piece_type)
 
     def legal_moves(self, presume: bool = False):
-        legal_coords: list[tuple[int, int]] = []
+        legal_coords: list[Tuple[int, int]] = []
         for x in range(3):
             for y in range(3):
                 if x == 1 and y == 1 or \

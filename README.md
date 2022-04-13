@@ -44,6 +44,11 @@ Otherwise, if you want to contribute feel free to open a pull request.
 
 # Installation
 
+## Uncompress chess engine 
+```shell
+cd engine ; tar -xf Stockfish.tar.gz ; cd ../
+```
+
 ## Install python 3.10 
 
 Install Conda to manage python env
